@@ -6,7 +6,7 @@
 /*   By: klucchin <klucchin@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 20:56:27 by klucchin          #+#    #+#             */
-/*   Updated: 2025/12/01 15:45:27 by klucchin         ###   ########.fr       */
+/*   Updated: 2025/12/02 20:37:00 by klucchin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,5 +111,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		i++;
 	}
 	s3[k] = 0;
+    free(s3);
 	return (s3);
 }
