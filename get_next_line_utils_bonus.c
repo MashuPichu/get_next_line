@@ -6,19 +6,32 @@
 /*   By: klucchin <klucchin@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 20:56:27 by klucchin          #+#    #+#             */
-/*   Updated: 2025/12/02 20:37:00 by klucchin         ###   ########.fr       */
+/*   Updated: 2025/12/11 14:38:13 by klucchin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line_bonus.h"
 
+int	ft_strlen(const char *s)
+{
+	int	i;
+
+	if (!s)
+		return (0);
+	i = 0;
+	while (s[i] != '\0')
+	{
+		i++;
+	}
+	return (i);
+}
+
 char	*ft_strchr(const char *s, int c)
 {
-	int i;
+	int	i;
 
 	if (!s)
 		return (NULL);
-
 	i = 0;
 	while (s[i])
 	{
@@ -26,10 +39,8 @@ char	*ft_strchr(const char *s, int c)
 			return ((char *)&s[i]);
 		i++;
 	}
-
 	if (c == '\0')
 		return ((char *)&s[i]);
-
 	return (NULL);
 }
 
@@ -73,44 +84,29 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	return (sub);
 }
 
-static char	*mallocing(size_t i, size_t j, char const *s1, char const *s2)
+char	*ft_strjoin(char *s1, char *s2)
 {
-	char	*s3;
+	char	*res;
+	int		i;
+	int		j;
 
-	i = 0;
-	while (s1[i] != '\0')
-		i++;
-	j = 0;
-	while (s2[j] != '\0')
-		j++;
-	s3 = malloc(i + j + 1);
-	return (s3);
-}
-
-char	*ft_strjoin(char const *s1, char const *s2)
-{
-	char	*s3;
-	size_t	i;
-	size_t	k;
-
-	if (!s1 || !s2)
+	if (!s1)
+		return (ft_substr(s2, 0, ft_strlen(s2)));
+	if (!s2)
+		return (ft_substr(s1, 0, ft_strlen(s1)));
+	res = malloc(ft_strlen(s1) + ft_strlen(s2) + 1);
+	if (!res)
 		return (NULL);
 	i = 0;
-	s3 = mallocing(i, 0, s1, s2);
-	k = 0;
-	while (s1[k] != '\0')
+	while (s1[i])
 	{
-		s3[k] = s1[k];
-		k++;
-	}
-	i = 0;
-	while (s2[i] != '\0')
-	{
-		s3[k] = s2[i];
-		k++;
+		res[i] = s1[i];
 		i++;
 	}
-	s3[k] = 0;
-    free(s3);
-	return (s3);
+	j = 0;
+	while (s2[j])
+		res[i++] = s2[j++];
+	res[i] = '\0';
+	free(s1);
+	return (res);
 }
