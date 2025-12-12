@@ -6,7 +6,7 @@
 /*   By: klucchin <klucchin@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 20:54:59 by klucchin          #+#    #+#             */
-/*   Updated: 2025/12/11 15:59:56 by klucchin         ###   ########.fr       */
+/*   Updated: 2025/12/12 22:31:26 by klucchin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,17 +70,21 @@ static char	*read_and_fill(int fd, char *stash)
 {
 	char	buffer[BUFFER_SIZE + 1];
 	int		bytes;
+	char	*temp;
 
 	bytes = BUFFER_SIZE;
 	while (!ft_strchr(stash, '\n') && bytes > 0)
 	{
 		bytes = read(fd, buffer, BUFFER_SIZE);
-		if (bytes <= 0)
+		if (bytes < 0)
 			return (free(stash), NULL);
+		if (bytes == 0)
+			return (stash);
 		buffer[bytes] = '\0';
-		stash = ft_strjoin(stash, buffer);
-		if (!stash)
-			return (NULL);
+		temp = ft_strjoin(stash, buffer);
+		if (!temp)
+			return (free(stash), NULL);
+		stash = temp;
 	}
 	return (stash);
 }
@@ -106,23 +110,26 @@ char	*get_next_line_bonus(int fd)
 // {
 // 	int fd = open("file1.txt", O_RDONLY);
 // 	int fd2 = open ("file2.txt", O_RDONLY);
+// 	char *l;
+// 	char *l2;
 
 // 	while (1)
 // 	{
-// 		char *l = get_next_line_bonus(fd);
-// 		printf("%s", l);
-// 		char *l2 = get_next_line_bonus(fd2);
-// 		printf("%s", l2);
+// 		l = get_next_line_bonus(fd);
+// 		if (l)
+// 			printf("%s", l);
+// 		l2 = get_next_line_bonus(fd2);
+// 		if (l2)
+// 			printf("%s", l2);
 // 		if (!l && !l2)
+// 		{
+// 			free(l);
+// 			free(l2);
 // 			break ;
+// 		}
+// 		free(l);
+// 		free(l2);
 // 	}
-// 	// while (1)
-// 	// {
-// 	// 	char *l2 = get_next_line_bonus(fd2);
-// 	// 	printf("%s", l2);
-// 	// 	if (!l2)
-// 	// 		break ;
-// 	// }
 // 	close(fd);
 // 	close(fd2);
 // 	return (0);

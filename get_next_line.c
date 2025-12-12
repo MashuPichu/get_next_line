@@ -6,7 +6,7 @@
 /*   By: klucchin <klucchin@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 20:49:45 by klucchin          #+#    #+#             */
-/*   Updated: 2025/12/11 16:05:57 by klucchin         ###   ########.fr       */
+/*   Updated: 2025/12/12 22:33:29 by klucchin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,58 +70,58 @@ static char	*read_and_fill(int fd, char *stash)
 {
 	char	buffer[BUFFER_SIZE + 1];
 	int		bytes;
+	char	*temp;
 
 	bytes = BUFFER_SIZE;
 	while (!ft_strchr(stash, '\n') && bytes > 0)
 	{
 		bytes = read(fd, buffer, BUFFER_SIZE);
-		if (bytes <= 0)
+		if (bytes < 0)
 			return (free(stash), NULL);
+		if (bytes == 0)
+			return (stash);
 		buffer[bytes] = '\0';
-		stash = ft_strjoin(stash, buffer);
-		if (!stash)
-			return (NULL);
+		temp = ft_strjoin(stash, buffer);
+		if (!temp)
+			return (free(stash), NULL);
+		stash = temp;
 	}
 	return (stash);
 }
 
-char	*get_next_line(int fd)
-{
-	static char	*stash;
-	char		*line;
+// char	*get_next_line(int fd)
+// {
+// 	static char	*stash;
+// 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	stash = read_and_fill(fd, stash);
-	if (!stash)
-		return (NULL);
-	line = extract_line(stash);
-	stash = remove_first_line(stash);
-	return (line);
-}
+// 	if (fd < 0 || BUFFER_SIZE <= 0)
+// 		return (NULL);
+// 	stash = read_and_fill(fd, stash);
+// 	if (!stash)
+// 		return (NULL);
+// 	line = extract_line(stash);
+// 	stash = remove_first_line(stash);
+// 	return (line);
+// }
 
 // #include <stdio.h>
 
 // int	main(void)
 // {
-// 	int fd = open("file1.txt", O_RDONLY);
-// 	int fd2 = open ("file2.txt", O_RDONLY);
+// 	int fd = open("file2.txt", O_RDONLY);
+// 	char *l;
 
 // 	while (1)
 // 	{
-// 		char *l = get_next_line(fd);
-// 		printf("%s", l);
+// 		l = get_next_line(fd);
 // 		if (!l)
+// 		{
+// 			free(l);
 // 			break ;
+// 		}
+// 		printf("%s", l);
+// 		free(l);
 // 	}
-// // 	// while (1)
-// // 	// {
-// // 	// 	char *l2 = get_next_line(fd2);
-// // 	// 	printf("%s", l2);
-// // 	// 	if (!l2)
-// // 	// 		break ;
-// // 	// }
 // 	close(fd);
-// 	close(fd2);
 // 	return (0);
 // }
