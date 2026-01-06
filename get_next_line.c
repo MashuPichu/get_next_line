@@ -6,7 +6,7 @@
 /*   By: klucchin <klucchin@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 20:49:45 by klucchin          #+#    #+#             */
-/*   Updated: 2025/12/12 22:33:29 by klucchin         ###   ########.fr       */
+/*   Updated: 2026/01/06 14:17:05 by klucchin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*remove_first_line(char *stash)
 		return (free(stash), NULL);
 	new_stash = malloc(ft_strlen(stash) - i + 1);
 	if (!new_stash)
-		return (NULL);
+		return (free(stash), NULL);
 	j = 0;
 	while (stash[i + j])
 	{
@@ -68,20 +68,24 @@ char	*remove_first_line(char *stash)
 
 static char	*read_and_fill(int fd, char *stash)
 {
-	char	buffer[BUFFER_SIZE + 1];
+	char	*buffer;
 	int		bytes;
 	char	*temp;
 
 	bytes = BUFFER_SIZE;
 	while (!ft_strchr(stash, '\n') && bytes > 0)
 	{
+		buffer = malloc(BUFFER_SIZE + 1);
+		if (!buffer)
+			return (NULL);
 		bytes = read(fd, buffer, BUFFER_SIZE);
 		if (bytes < 0)
-			return (free(stash), NULL);
+			return (free(buffer), free(stash), NULL);
 		if (bytes == 0)
-			return (stash);
+			return (free(buffer), stash);
 		buffer[bytes] = '\0';
 		temp = ft_strjoin(stash, buffer);
+		free(buffer);
 		if (!temp)
 			return (free(stash), NULL);
 		stash = temp;
@@ -89,39 +93,39 @@ static char	*read_and_fill(int fd, char *stash)
 	return (stash);
 }
 
-// char	*get_next_line(int fd)
-// {
-// 	static char	*stash;
-// 	char		*line;
+char	*get_next_line(int fd)
+{
+	static char	*stash;
+	char		*line;
 
-// 	if (fd < 0 || BUFFER_SIZE <= 0)
-// 		return (NULL);
-// 	stash = read_and_fill(fd, stash);
-// 	if (!stash)
-// 		return (NULL);
-// 	line = extract_line(stash);
-// 	stash = remove_first_line(stash);
-// 	return (line);
-// }
+	if (fd < 0 || BUFFER_SIZE <= 0 || BUFFER_SIZE > INT_MAX)
+		return (NULL);
+	stash = read_and_fill(fd, stash);
+	if (!stash)
+		return (NULL);
+	line = extract_line(stash);
+	stash = remove_first_line(stash);
+	return (line);
+}
 
-// #include <stdio.h>
+#include <stdio.h>
 
-// int	main(void)
-// {
-// 	int fd = open("file2.txt", O_RDONLY);
-// 	char *l;
+int	main(void)
+{
+	int fd = open("file2.txt", O_RDONLY);
+	char *l;
 
-// 	while (1)
-// 	{
-// 		l = get_next_line(fd);
-// 		if (!l)
-// 		{
-// 			free(l);
-// 			break ;
-// 		}
-// 		printf("%s", l);
-// 		free(l);
-// 	}
-// 	close(fd);
-// 	return (0);
-// }
+	while (1)
+	{
+		l = get_next_line(fd);
+		if (!l)
+		{
+			free(l);
+			break ;
+		}
+		printf("%s", l);
+		free(l);
+	}
+	close(fd);
+	return (0);
+}

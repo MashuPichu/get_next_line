@@ -6,7 +6,7 @@
 /*   By: klucchin <klucchin@student.42nice.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/25 20:54:59 by klucchin          #+#    #+#             */
-/*   Updated: 2025/12/12 22:31:26 by klucchin         ###   ########.fr       */
+/*   Updated: 2026/01/06 14:06:01 by klucchin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,20 +68,24 @@ char	*remove_first_line(char *stash)
 
 static char	*read_and_fill(int fd, char *stash)
 {
-	char	buffer[BUFFER_SIZE + 1];
+	char	*buffer;
 	int		bytes;
 	char	*temp;
 
 	bytes = BUFFER_SIZE;
 	while (!ft_strchr(stash, '\n') && bytes > 0)
 	{
+		buffer = malloc(BUFFER_SIZE + 1);
+		if (!buffer)
+			return(NULL);
 		bytes = read(fd, buffer, BUFFER_SIZE);
 		if (bytes < 0)
-			return (free(stash), NULL);
+			return (free(buffer), free(stash), NULL);
 		if (bytes == 0)
-			return (stash);
+			return (free(buffer), stash);
 		buffer[bytes] = '\0';
 		temp = ft_strjoin(stash, buffer);
+		free (buffer);
 		if (!temp)
 			return (free(stash), NULL);
 		stash = temp;
@@ -104,33 +108,33 @@ char	*get_next_line_bonus(int fd)
 	return (line);
 }
 
-// #include <stdio.h>
+#include <stdio.h>
 
-// int	main(void)
-// {
-// 	int fd = open("file1.txt", O_RDONLY);
-// 	int fd2 = open ("file2.txt", O_RDONLY);
-// 	char *l;
-// 	char *l2;
+int	main(void)
+{
+	int fd = open("file1.txt", O_RDONLY);
+	int fd2 = open ("file2.txt", O_RDONLY);
+	char *l;
+	char *l2;
 
-// 	while (1)
-// 	{
-// 		l = get_next_line_bonus(fd);
-// 		if (l)
-// 			printf("%s", l);
-// 		l2 = get_next_line_bonus(fd2);
-// 		if (l2)
-// 			printf("%s", l2);
-// 		if (!l && !l2)
-// 		{
-// 			free(l);
-// 			free(l2);
-// 			break ;
-// 		}
-// 		free(l);
-// 		free(l2);
-// 	}
-// 	close(fd);
-// 	close(fd2);
-// 	return (0);
-// }
+	while (1)
+	{
+		l = get_next_line_bonus(fd);
+		if (l)
+			printf("%s", l);
+		l2 = get_next_line_bonus(fd2);
+		if (l2)
+			printf("%s", l2);
+		if (!l && !l2)
+		{
+			free(l);
+			free(l2);
+			break ;
+		}
+		free(l);
+		free(l2);
+	}
+	close(fd);
+	close(fd2);
+	return (0);
+}
